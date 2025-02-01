@@ -1,0 +1,36 @@
+import pandas as pd
+
+def find_s_algorithm(filename):
+    # Load the CSV file
+    df = pd.read_csv(filename)
+    
+    # Extract features (all columns except the last one)
+    attributes = df.iloc[:, :-1].values  
+    target = df.iloc[:, -1].values  # Last column (target variable)
+    
+    # Initialize the most specific hypothesis (all attributes set to '?')
+    hypothesis = ['?' for _ in range(len(attributes[0]))]
+    
+    # Find the first positive example and use it as the initial hypothesis
+    for i, label in enumerate(target):
+        if label == 'Yes':  # Consider only positive examples
+            hypothesis = attributes[i].tolist()
+            break
+
+    # Iterate through all training examples
+    for i, label in enumerate(target):
+        if label == 'Yes':  # Consider only positive examples
+            for j in range(len(hypothesis)):
+                if hypothesis[j] != attributes[i][j]:  
+                    hypothesis[j] = '?'  # Generalize hypothesis
+    
+    return hypothesis
+
+# File name (ensure the CSV file is in the same directory)
+filename = "training_data.csv"
+
+# Run the Find-S algorithm
+specific_hypothesis = find_s_algorithm(filename)
+
+# Display the most specific hypothesis
+print("Most Specific Hypothesis:", specific_hypothesis)
